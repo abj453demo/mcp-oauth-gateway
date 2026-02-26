@@ -7,7 +7,15 @@
 - Python 3.10+
 - [uv](https://docs.astral.sh/uv/) (recommended) or pip
 
-### Install & Run (GitHub Copilot MCP)
+### Create a GitHub OAuth App
+
+1. Go to [GitHub Developer Settings → OAuth Apps → New OAuth App](https://github.com/settings/developers)
+2. Set **Authorization callback URL** to `http://localhost:8002/upstream/callback`
+3. Fill in any **Application name** and **Homepage URL**
+4. Click **Register application**
+5. Copy the **Client ID** and generate a **Client Secret**
+
+### Install & Run
 
 ```bash
 # Clone and install
@@ -16,14 +24,16 @@ cd mcp-oauth-gateway
 uv venv && source .venv/bin/activate
 uv pip install -e .
 
-# Start the gateway (proxies to GitHub Copilot's remote MCP server)
+# Start the gateway (proxies to GitHub's remote MCP server)
 mcp-oauth-gateway --port=8002 \
   --upstream-rs=https://api.githubcopilot.com/mcp/ \
-  --upstream-client-id=Ov23lipCuCOuWglr1ejY \
-  --upstream-client-secret=d3cd743c5c98fb22817e66c4ef7660f7f1ea6eee \
+  --upstream-client-id=<YOUR_GITHUB_CLIENT_ID> \
+  --upstream-client-secret=<YOUR_GITHUB_CLIENT_SECRET> \
   --upstream-authorize-endpoint=https://github.com/login/oauth/authorize \
   --upstream-token-endpoint=https://github.com/login/oauth/access_token
 ```
+
+Replace `<YOUR_GITHUB_CLIENT_ID>` and `<YOUR_GITHUB_CLIENT_SECRET>` with the values from your GitHub OAuth App.
 
 The gateway will be available at `http://localhost:8002`. Point your MCP client at `http://localhost:8002/mcp`.
 

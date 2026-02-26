@@ -2,6 +2,6 @@
 
 import sys
 
-from mcp_oauth_server.gateway import main
+from gateway.gateway import main
 
 sys.exit(main())
