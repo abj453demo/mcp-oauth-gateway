@@ -1,0 +1,27 @@
+[project]
+name = "mcp-oauth-server"
+version = "0.1.0"
+description = "MCP OAuth Gateway — transparent proxy with chained OAuth for upstream MCP servers"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "anyio>=4.5",
+    "click>=8.2.0",
+    "httpx>=0.27",
+    "mcp>=1.25",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.5.2",
+    "sse-starlette>=1.6.1",
+    "uvicorn>=0.23.1",
+]
+
+[project.scripts]
+mcp-oauth-gateway = "mcp_oauth_server.gateway:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mcp_oauth_server"]
