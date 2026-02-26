@@ -52,15 +52,15 @@ After gateway login, you'll be redirected to GitHub for OAuth authorization (Scr
 
 ## Overview
 
-The MCP OAuth Gateway is a transparent proxy that sits between an MCP client and an upstream MCP server (Authorization Server + Resource Server). It implements its own OAuth 2.1 layer and chains it with the upstream's OAuth, so the client sees a single auth surface while two independent token sets are managed behind the scenes.
+The MCP OAuth Gateway is a transparent proxy that sits between an MCP client and an upstream MCP server. It implements its own OAuth 2.1 layer and chains it with the upstream's OAuth, so the client sees a single auth surface while two independent token sets are managed behind the scenes.
 
 The gateway acts as both an **Authorization Server** (AS) and a **Resource Server** (RS) to the client. To the upstream, it acts as a regular OAuth client.
 
 ```
-┌──────────┐       ┌─────────────────────┐       ┌──────────────┐   ┌──────────────┐
-│  Client   │──────▶│  Gateway (AS + RS)   │──────▶│  Upstream AS  │   │  Upstream RS  │
-│ (Cascade) │◀──────│  :8002               │◀──────│  :9000        │   │  :8001        │
-└──────────┘       └─────────────────────┘       └──────────────┘   └──────────────┘
+┌──────────┐       ┌─────────────────────┐       ┌─────────────────────────────┐
+│  Client   │──────▶│  Gateway (AS + RS)   │──────▶│  GitHub OAuth + MCP Server   │
+│ (Cascade) │◀──────│  localhost:8002      │◀──────│  api.githubcopilot.com/mcp/  │
+└──────────┘       └─────────────────────┘       └─────────────────────────────┘
 ```
 
 ## Client Registration
@@ -71,7 +71,7 @@ The gateway supports **OAuth 2.0 Dynamic Client Registration** (RFC 7591).
 2. Client fetches `GET /.well-known/oauth-authorization-server` to learn the gateway's OAuth endpoints (`/authorize`, `/token`, `/register`).
 3. Client calls `POST /register` with its redirect URIs and grant types. The gateway stores the client in memory and returns a `client_id` and `client_secret`.
 
-The gateway also registers **itself** as a client with the upstream AS — either via pre-configured credentials (`--upstream-client-id` / `--upstream-client-secret`) or dynamically by calling the upstream's `/register` endpoint on first use.
+The gateway uses **pre-configured credentials** (`--upstream-client-id` / `--upstream-client-secret`) to authenticate with the upstream AS (e.g., a GitHub OAuth App). For upstreams that support it, dynamic registration is also available.
 
 ## Two-Screen Auth Flow
 
